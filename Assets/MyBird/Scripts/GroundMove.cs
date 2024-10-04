@@ -12,6 +12,11 @@ namespace MyBird
 
         private void Update()
         {
+            if(GameManager.IsDeath)
+            {
+                return;
+            }
+
             moveGround();
         }
 

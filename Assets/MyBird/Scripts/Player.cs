@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using TMPro;
 
 namespace MyBird
 {
@@ -21,6 +22,10 @@ namespace MyBird
 
         // 대기
         [SerializeField] private float readyForce = 1f;
+
+        // 게임ui
+        public GameObject readyUI;
+        public GameObject gameoverUI;
         #endregion
 
         private void Start()
@@ -57,13 +62,17 @@ namespace MyBird
         // 컨트롤 입력
         void InputBird()
         {
+            if (GameManager.IsDeath)
+                return;
+
             // 점프: 스페이스바 또는 마우스 좌클릭
             keyJump |= Input.GetKeyDown(KeyCode.Space);
             keyJump |= Input.GetMouseButtonDown(0); // 0은 왼클릭
 
             if(GameManager.IsStart == false && keyJump)
             {
-                GameManager.IsStart = true;
+                MoveStartBird();
+
             }
 
         }
@@ -99,13 +108,13 @@ namespace MyBird
         // 버드 이동
         void MoveBird()
         {
-            if (GameManager.IsStart==false)
+            if (GameManager.IsStart==false||GameManager.IsDeath==true)
             {
                 return;
-                transform.Translate(Vector3.right * Time.deltaTime * moveSpeed, Space.World);
+               
             }
 
-
+             transform.Translate(Vector3.right * Time.deltaTime * moveSpeed, Space.World);
           
         }
         // 버드 대기
@@ -120,28 +129,58 @@ namespace MyBird
             {
                 rb2D.velocity = Vector2.up * readyForce;
             }
-           
+        }
+
+       // 버드죽기
+       void DeathBrid()
+        {
+            // 두번 죽음 처리 방지
+            if (GameManager.IsDeath)
+            {
+                return;
+            }
+            // Debug.Log("죽음!");
+            GameManager.IsDeath = true;
+            gameoverUI.SetActive(true);
+        }
+        // 점수 획득
+        void GetPoint()
+        {
+            // 두번 죽음 처리 방지
+            if (GameManager.IsDeath)
+            {
+                return;
+            }
+            GameManager.Score++;
+        }
+
+        void MoveStartBird()
+        {
+            GameManager.IsStart = true;
+            readyUI.SetActive(false);
+        }
+
+        // 버드 충돌 처리
+        private void OnTriggerEnter2D(Collider2D collider)
+        {
+
+            if(collider.tag == "Pipe")
+            {
+                DeathBrid();
+            }
+            else if(collider.tag == "Point")
+            {
+                GetPoint();
+            }
+        }
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if(collision.gameObject.tag == "Ground")
+            {
+                DeathBrid();
+            }
+
         }
     }
 }
 
-/*private Rigidbody2D rb;
-private float jump = 5f;
-
-void Start()
-{
-    rb = GetComponent<Rigidbody2D>();
-}
-
-void Update()
-{
-    if (Input.GetKeyDown(KeyCode.Space))
-    {
-        Jump();
-    }
-}
-
-void Jump()
-{
-    rb.velocity = new Vector2(rb.velocity.x, jump);
-}*/
