@@ -15,6 +15,7 @@ namespace MyBird
 
         [SerializeField] private float maxSpawnTimer = 1.05f;
         [SerializeField] private float minSpawnTimer = 0.95f;
+        public static float levelTimer = 0f;
 
         // 스폰 지점
         [SerializeField]private float maxspawnY = 3.5f;
@@ -44,7 +45,7 @@ namespace MyBird
 
                 //타이머 초기화
                 //  countdown = spawnTimer;
-                countdown = Random.Range(minSpawnTimer, maxSpawnTimer);
+                countdown = Random.Range(minSpawnTimer, maxSpawnTimer-levelTimer);  // 1.05f~ 0.95f => 1.05~0.90f
             }
             countdown -= Time.deltaTime;
         }

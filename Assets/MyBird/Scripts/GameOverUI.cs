@@ -23,7 +23,7 @@ namespace MyBird
             if (GameManager.Score > GameManager.BestScore) // 저장된 데이터와 비교하기
             {
                 GameManager.BestScore = GameManager.Score;
-                PlayerPrefs.SetInt("BestScore", GameManager.BestScore);
+                PlayerPrefs.SetInt("BestScore", GameManager.Score);
                 newText.text = "New";
                // Debug.Log($"save bestscore:{GameManager.BestScore}");
             }
